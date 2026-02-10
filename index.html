@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Pretty Little Lady</title>
+
+    <link rel="preload" as="image" href="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif">
+    <link rel="preload" as="image" href="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif">
+    <link rel="preload" as="image" href="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
+    <link rel="preload" as="image" href="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif">
+    <link rel="preload" as="image" href="https://media.giphy.com/media/l4FGpP4lxGGgK5CBW/giphy.gif">
+    <link rel="preload" as="image" href="https://media.giphy.com/media/3oz8xAFtqoOUUrsh7W/giphy.gif">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff5f7;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #container {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        h1.question-text {
+            font-size: 2.8rem;
+            color: #333;
+            line-height: 1.4;
+            margin-top: -120px; /* Question remains high to avoid overlap */
+            margin-bottom: 50px;
+        }
+
+        .gif-container {
+            margin-bottom: 20px;
+        }
+
+        .gifGrid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width:700px){ .gifGrid{grid-template-columns: 1fr} }
+        
+        .gifGrid img {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid #ffe2ea;
+            background: #fff; /* White background to make 'contained' GIFs look clean */
+            box-shadow: 0 10px 18px rgba(17, 24, 39, .06);
+            display: block;
+            /* ✅ CHANGE: contain ensures the full GIF is seen, no cutting */
+            object-fit: contain; 
+            aspect-ratio: 1/1;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px; 
+            position: relative;
+        }
+
+        button {
+            padding: 15px 45px;
+            font-size: 1.4rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+
+        #noBtn {
+            background-color: #888;
+            color: white;
+            position: relative;
+            z-index: 99;
+            transition: 0.1s ease-out;
+            margin-left: 20px;
+        }
+
+        #success-content {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <div id="proposal-content">
+            <div class="gif-container">
+                <img src="https://media.tenor.com/m/8Y-jW_f3N60AAAAC/cute-love.gif" width="250" alt="Cute Panda">
+            </div>
+            <h1 class="question-text">Will you be my Valentine? ❤️</h1>
+            
+            <div class="btn-container">
+                <button id="yesBtn">Yes</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+
+        <div id="success-content">
+            <div class="gif-container">
+                <div class="gifGrid">
+                    <img alt="gif1" src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif">
+                    <img alt="gif2" src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif">
+                    <img alt="gif3" src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
+                    <img alt="gif4" src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif">
+                    <img alt="gif5" src="https://media.giphy.com/media/l4FGpP4lxGGgK5CBW/giphy.gif">
+                    <img alt="gif6" src="https://media.giphy.com/media/3oz8xAFtqoOUUrsh7W/giphy.gif">
+                </div>
+            </div>
+            <h1>Yippee! Best Valentine ever! 💖</h1>
+            <p style="color: #666; font-size: 1.2rem;">I've saved our special moment!</p>
+        </div>
+    </div>
+
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const proposalContent = document.getElementById('proposal-content');
+        const successContent = document.getElementById('success-content');
+
+        const messages = ["No 🙃","Are you sure? 🥺","Just checking… really sure? 😌","Hmm. That felt accidental 😅", "Okay but my heart disagrees 💘","This button seems confused 😂","I respect your choice… but 👀", "That click had hesitation energy","Take your time, I'll wait 🙂","Still cute either way 💗", "You know YES is smiling at you","No pressure. Mild persuasion only 😇","Even the universe blinked just now ✨", "That was bold. Unexpected. Iconic.","I admire the confidence 😌","This is becoming a conversation", "Okay but imagine the GIFs 👀","Your finger slipped, didn't it?","I'll pretend I didn't see that", "Interesting choice… fascinating","Still rooting for us though 💞","Plot twist unlocked", "Rom-coms usually say YES here","Suspense is building 😳","The YES button feels ignored", "No is mysterious, I'll give you that","Your honesty is appreciated 💐","This tension deserves background music", "Okay, villain arc activated (jk)","I'll ask again, politely 😌","That was very main-character of you", "No worries, still smiling here 🙂","Your move, protagonist","This is not a rejection, it's a pause", "The YES button just sighed","Bold strategy, let's see how it plays out","You're enjoying this, aren't you? 😏", "This feels like a slow-burn romcom","Romance loading… please wait","I'm still here, by the way 💗", "Okay okay, I see you","No today… maybe yes in 2 seconds?","The suspense is cute though", "Dramatic pause noted","Respectfully… reconsider?","No is temporary. GIFs are forever", "You're making this interesting","Still hoping quietly 💘"  ];
+        let messageIndex = 0;
+        let scale = 1;
+        let growthAmount = 0.12;
+
+        noBtn.addEventListener('mouseover', () => {
+            noBtn.style.position = 'fixed';
+            const padding = 60;
+            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+
+            messageIndex = (messageIndex + 1) % messages.length;
+            noBtn.innerText = messages[messageIndex];
+
+            scale += growthAmount;
+            yesBtn.style.transform = `scale(${scale})`;
+            if (growthAmount > 0.02) {
+                growthAmount *= 0.95; 
+            }
+        });
+
+        yesBtn.addEventListener('click', () => {
+            const now = new Date();
+            const istTime = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+            const formAction = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfrYEC1BMFN4ec4vWdl9hQZt-WBm3Jk4ZmcpNwMHPTzp7rHUg/formResponse";
+            
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = formAction;
+            form.target = "hidden_iframe";
+
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "entry.541753084";
+            input.value = istTime;
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            setInterval(function() {
+              confetti(Object.assign({}, defaults, { particleCount: 40, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount: 40, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 300);
+
+            proposalContent.style.display = 'none';
+            noBtn.style.display = 'none';
+            successContent.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
